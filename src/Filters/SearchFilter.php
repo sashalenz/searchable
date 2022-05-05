@@ -22,9 +22,9 @@ class SearchFilter
             $this->value,
             fn (Builder $query) => $query
                 ->when(
-                    method_exists($model, 'getSearchable'),
+                    method_exists($model, 'getSearchable') && $model->getSearchable()->count(),
                     fn (Builder $query) => $query->where(
-                        fn (Builder $query) => collect($model->getSearchable())
+                        fn (Builder $query) => $model->getSearchable()
                             ->map(fn ($field) => $table . '.' . $field)
                             ->each(
                                 fn ($field) => $query->orWhere(
@@ -46,12 +46,12 @@ class SearchFilter
                     )
                 )
                 ->when(
-                    method_exists($model, 'getSearchable'),
-                    fn (Builder $query) => $query->orWhere(
-                        fn (Builder $query) => collect($model->getSearchableRelations())
+                    method_exists($model, 'getSearchableRelations') && $model->getSearchableRelations()->count(),
+                    fn (Builder $query) => $query->where(
+                        fn (Builder $query) => $model->getSearchableRelations()
                             ->filter(fn ($relation) => $model->isRelation($relation))
                             ->each(
-                                fn ($relation) => $query->whereHas(
+                                fn ($relation) => $query->orWhereHas(
                                     $relation,
                                     fn (Builder $query) => $query->tap(new self($this->value, $this->strict))
                                 )
@@ -60,11 +60,11 @@ class SearchFilter
                 )
                 ->when(
                     $model->getIncrementing(),
-                    fn (Builder $query) => $query->orWhere(
+                    fn (Builder $query) => $query->where(
                         fn (Builder $query) => Str::of($this->value)
                             ->explode(',')
                             ->filter(fn ($value) => is_numeric($value))
-                            ->each(fn ($value) => $query->orWhere($table . '.' . $keyName, $value))
+                            ->each(fn ($value) => $query->orWhere($table . '.' . $keyName, (int)$value))
                     )
                 )
         );

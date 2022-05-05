@@ -3,17 +3,18 @@
 namespace Sashalenz\Searchable\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 trait Searchable
 {
-    public function getSearchable():? array
+    public function getSearchable():? Collection
     {
-        return $this->searchable ?? [];
+        return collect($this->searchable ?? []);
     }
 
-    public function getSearchableRelations(): array
+    public function getSearchableRelations(): Collection
     {
-        return $this->searchableRelations ?? [];
+        return collect($this->searchableRelations ?? []);
     }
 
     public static function searchQuery(): Builder

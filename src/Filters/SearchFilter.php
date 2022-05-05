@@ -10,7 +10,8 @@ class SearchFilter
     public function __construct(
         private readonly ?string $value,
         private readonly bool $strict = false
-    ) { }
+    ) {
+    }
 
     public function __invoke(Builder $query): Builder
     {
@@ -33,7 +34,8 @@ class SearchFilter
                                         fn (Builder $query) => $query->where($field, 'LIKE', $this->value),
                                         fn (Builder $query) => Str::of($this->value)
                                             ->explode(' ')
-                                            ->map(fn ($word) => Str::of($word)
+                                            ->map(
+                                                fn ($word) => Str::of($word)
                                                 ->lower()
                                                 ->prepend('"%')
                                                 ->append('%"')

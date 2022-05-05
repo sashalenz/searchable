@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 
 trait Searchable
 {
-    public function getSearchable():? Collection
+    public function getSearchable(): ?Collection
     {
         return collect($this->searchable ?? []);
     }

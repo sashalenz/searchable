@@ -47,7 +47,7 @@ class SearchFilter
                 )
                 ->when(
                     method_exists($model, 'getSearchableRelations') && $model->getSearchableRelations()->count(),
-                    fn (Builder $query) => $query->where(
+                    fn (Builder $query) => $query->orWhere(
                         fn (Builder $query) => $model->getSearchableRelations()
                             ->filter(fn ($relation) => $model->isRelation($relation))
                             ->each(
@@ -59,8 +59,8 @@ class SearchFilter
                     )
                 )
                 ->when(
-                    $model->getIncrementing(),
-                    fn (Builder $query) => $query->where(
+                    $keyName,
+                    fn (Builder $query) => $query->orWhere(
                         fn (Builder $query) => Str::of($this->value)
                             ->explode(',')
                             ->filter(fn ($value) => is_numeric($value))

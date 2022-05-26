@@ -22,7 +22,8 @@ class SearchFilter
         return $query->when(
             $this->value,
             fn (Builder $query) => $query
-                ->where(fn (Builder $query) => $query
+                ->where(
+                    fn (Builder $query) => $query
                     ->when(
                         method_exists($model, 'getSearchable') && $model->getSearchable()->count(),
                         fn (Builder $query) => $query->where(
